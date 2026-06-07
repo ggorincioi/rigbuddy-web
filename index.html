@@ -251,10 +251,53 @@
     <p class="lead">Give your drivers a faster way to inspect and your safety team a record they can trust.</p>
     <div class="cta" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-top:26px">
       <a class="btn btn-primary" href="https://app.rigbuddy.us/signup">Start free</a>
-      <a class="btn btn-ghost" href="mailto:sales@rigbuddy.us">Talk to us</a>
+      <a class="btn btn-ghost" href="#demo">Talk to us</a>
     </div>
   </div>
 </section>
+
+<section id="demo" class="center" style="padding:72px 0">
+  <div class="wrap" style="max-width:620px">
+    <div class="eyebrow">Get started</div>
+    <h2 class="h">Request a demo</h2>
+    <p class="lead">Tell us about your fleet and we will show you RigBuddy. We usually reply within a business day.</p>
+    <style>
+      #demo-form input,#demo-form textarea{padding:12px 14px;border-radius:10px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.04);color:inherit;font:inherit;width:100%;box-sizing:border-box}
+      #demo-form input:focus,#demo-form textarea:focus{outline:none;border-color:var(--accent)}
+      #demo-form input[name=website]{position:absolute;left:-9999px;width:1px;height:1px}
+    </style>
+    <form id="demo-form" style="margin-top:26px;display:grid;gap:12px;text-align:left">
+      <input name="name" placeholder="Your name" autocomplete="name">
+      <input name="email" type="email" required placeholder="Work email" autocomplete="email">
+      <input name="company" placeholder="Company" autocomplete="organization">
+      <input name="fleet_size" placeholder="How many trucks?" inputmode="numeric">
+      <textarea name="message" rows="4" placeholder="Anything we should know? (optional)"></textarea>
+      <input name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+      <button type="submit" class="btn btn-primary" style="justify-self:start">Request demo</button>
+      <p id="demo-status" style="margin:0;font-size:14px"></p>
+    </form>
+  </div>
+</section>
+<script>
+(function(){
+  var f=document.getElementById("demo-form"),s=document.getElementById("demo-status");
+  if(!f)return;
+  f.addEventListener("submit",function(e){
+    e.preventDefault();
+    var btn=f.querySelector("button[type=submit]");
+    var data={};new FormData(f).forEach(function(v,k){data[k]=v;});
+    s.textContent="Sending...";s.style.color="#94a3b8";btn.disabled=true;
+    fetch("https://app.rigbuddy.us/api/contact",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)})
+      .then(function(r){return r.json().catch(function(){return{ok:r.ok};});})
+      .then(function(j){
+        if(j&&j.ok){f.reset();s.textContent="Thanks! We will be in touch shortly.";s.style.color="var(--accent)";}
+        else{s.textContent=(j&&j.error)||"Something went wrong. Email sales@rigbuddy.us.";s.style.color="#f87171";}
+      })
+      .catch(function(){s.textContent="Network error. Email sales@rigbuddy.us.";s.style.color="#f87171";})
+      .finally(function(){btn.disabled=false;});
+  });
+})();
+</script>
 
 <footer>
   <div class="wrap foot">
